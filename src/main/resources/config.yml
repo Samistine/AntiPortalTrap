@@ -1,0 +1,131 @@
+Allowed Blocks: # This determines what blocks will not disable the portal when blocking the exit
+
+   # Block names are listed under their IDs
+
+   Bottom: # Indicates certain blocks that may be used for the bottom exit block
+   
+     - 0
+     # AIR
+     - 6
+     # SAPLING
+     - 8
+     # WATER
+     - 10
+     # LAVA
+     - 30
+     # COBWEB
+     - 31
+     # TALL GRASS
+     - 32
+     # DEAD BUSH
+     - 37
+     # DANDELION
+     - 38
+     # POPPY
+     - 39
+     # BROWN MUSHROOM
+     - 40
+     # RED MUSHROOM
+     - 50
+     # TORCH
+     - 51
+     # FIRE
+     - 55
+     # REDSTONE WIRE
+     - 59
+     # WHEAT
+     - 63
+     # SIGN
+     - 65
+     # LADDER
+     - 66
+     # RAIL (Normal)
+     - 68
+     # SIGN (Wall Mounted)
+     - 69
+     # LEVER
+     - 70
+     # STONE PRESSURE PLATE
+     - 72
+     # WOODEN PRESSURE PLATE
+     - 75
+     # REDSTONE TORCH (On)
+     - 76
+     # REDSTONE TORCH (Off)
+     - 77
+     # STONE BUTTON
+     - 83
+     # SUGAR CANE
+     - 90
+     # PORTAL
+     - 104
+     # PUMPKIN VINE
+     - 105
+     # MELON VINE
+     - 106
+     # VINE
+     - 115
+     # NETHER WART
+     - 131
+     # TRIPWIRE HOOK
+     - 132
+     # TRIPWIRE
+     - 141
+     # CARROTS
+     - 142
+     # POTATOES
+     - 143
+     # WOODEN BUTTON
+     - 147
+     # WEIGHTED PRESSURE PLATE (Light)
+     - 148
+     # WEIGHTED PRESSURE PLATE (Heavy)
+     - 157
+     # RAIL (Activator)
+     - 171
+     # CARPET
+     - 175
+     # SUNFLOWER
+
+   Top: # Indicates certain blocks that may be used for the top exit block
+   
+     - 0
+     # AIR
+     - 8
+     # WATER
+     - 10
+     # LAVA
+     - 30
+     # COBWEB
+     - 50
+     # TORCH
+     - 51
+     # FIRE
+     - 63
+     # SIGN
+     - 65
+     # LADDER
+     - 68
+     # SIGN (Wall Mounted)
+     - 69
+     # LEVER
+     - 75
+     # REDSTONE TORCH (On)
+     - 76
+     # REDSTONE TORCH (Off)
+     - 77
+     # STONE BUTTON
+     - 83
+     # SUGAR CANE
+     - 90
+     # PORTAL
+     - 106
+     # VINE
+     - 131
+     # TRIPWIRE HOOK
+     - 132
+     # TRIPWIRE
+     - 143
+     # WOODEN BUTTON
+     - 175
+     # SUNFLOWER
