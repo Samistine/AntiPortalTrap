@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class AntiPortalTrap extends JavaPlugin implements Listener {
 
-    Map<Player, HashMap<String, List<Double>>> portalloc = new HashMap<>();
+    Map<Player, XZLocation> portalloc = new HashMap<>();
     Map<Player, Location> startloc = new HashMap<>();
 
     @Override
@@ -95,23 +95,24 @@ public class AntiPortalTrap extends JavaPlugin implements Listener {
                     && (!getAllowedBlocks_Bottom().contains(midsblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topsblock.getBlock().getTypeId()))
                     && (!getAllowedBlocks_Bottom().contains(mideblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topeblock.getBlock().getTypeId()))
                     && (!getAllowedBlocks_Bottom().contains(midwblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topwblock.getBlock().getTypeId()))) {
-                HashMap<String, List<Double>> coordloc = new HashMap<>();
+
                 List<Double> xloc = new ArrayList<>();
                 List<Double> zloc = new ArrayList<>();
+
                 startloc.put(p, l);
                 xloc.add(l.getX() - 2.0);
                 xloc.add(l.getX() - 1.0);
                 xloc.add(l.getX());
                 xloc.add(l.getX() + 1.0);
                 xloc.add(l.getX() + 2.0);
-                coordloc.put("x: ", xloc);
+
                 zloc.add(l.getZ() - 2.0);
                 zloc.add(l.getZ() - 1.0);
                 zloc.add(l.getZ());
                 zloc.add(l.getZ() + 1.0);
                 zloc.add(l.getZ() + 2.0);
-                coordloc.put("z: ", zloc);
-                portalloc.put(p, coordloc);
+
+                portalloc.put(p, new XZLocation(xloc, zloc));
                 Block block = p.getLocation().getWorld().getBlockAt(p.getLocation());
                 block.setType(Material.AIR);
             }
@@ -132,14 +133,13 @@ public class AntiPortalTrap extends JavaPlugin implements Listener {
         if (!portalloc.containsKey(p)) {
             return;
         }
-        Map<String, List<Double>> coordloc = portalloc.get(p);
-        List<Double> xloc = coordloc.get("x: ");
-        List<Double> zloc = coordloc.get("z: ");
+        XZLocation coordloc = portalloc.get(p);
+        List<Double> xloc = coordloc.x;
+        List<Double> zloc = coordloc.z;
         if (!xloc.contains(portaltpleave.getTo().getX()) && !zloc.contains(portaltpleave.getTo().getZ())) {
             Location l = startloc.get(p);
             Block block = l.getWorld().getBlockAt(l);
             block.setType(Material.FIRE);
-            coordloc.clear();
             portalloc.remove(p);
             startloc.remove(p);
         }
@@ -151,16 +151,26 @@ public class AntiPortalTrap extends JavaPlugin implements Listener {
         if (!portalloc.containsKey(p)) {
             return;
         }
-        HashMap<String, List<Double>> coordloc = portalloc.get(p);
-        List<Double> xloc = coordloc.get("x: ");
-        List<Double> zloc = coordloc.get("z: ");
+        XZLocation coordloc = portalloc.get(p);
+        List<Double> xloc = coordloc.x;
+        List<Double> zloc = coordloc.z;
         if (xloc.get(0) > portalleave.getTo().getX() || xloc.get(4) < portalleave.getTo().getX() || zloc.get(0) > portalleave.getTo().getZ() || zloc.get(4) < portalleave.getTo().getZ()) {
             Location l = startloc.get(p);
             Block block = l.getWorld().getBlockAt(l);
             block.setType(Material.FIRE);
-            coordloc.clear();
             portalloc.remove(p);
             startloc.remove(p);
+        }
+    }
+
+    static class XZLocation {
+
+        List<Double> x;
+        List<Double> z;
+
+        public XZLocation(List<Double> x, List<Double> z) {
+            this.x = x;
+            this.z = z;
         }
     }
 }

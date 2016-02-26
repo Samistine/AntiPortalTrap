@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.samistine.plugin</groupId>
     <artifactId>AntiPortalTrap</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.2-SamistineV2</version>
     <build>
         <finalName>AntiPortalTrap</finalName>
         <resources>
@@ -22,6 +22,7 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
+                <version>3.5.1</version>
             </plugin>
         </plugins>
     </build>

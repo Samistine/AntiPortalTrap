@@ -1,5 +1,6 @@
 name: AntiPortalTrap
-version: 1.2-Samistine
+version: 1.2-SamistineV2
 main: me.xCopyright.antiportaltrap.AntiPortalTrap
 author: xCopyright
-description: Prevents players from being portal trappe
+authors: [Samistine]
+description: Prevents players from being portal trapped
