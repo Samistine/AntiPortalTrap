@@ -29,24 +29,22 @@ public class AntiPortalTrap extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPortalEvent(PlayerPortalEvent portal) {
-        final Player p = portal.getPlayer();
-        getServer().getScheduler().scheduleSyncDelayedTask(this, new TrapCheck(p), 1L);
+        getServer().getScheduler().scheduleSyncDelayedTask(this, new TrapCheck(portal.getPlayer()), 1L);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerMoveEvent(PlayerMoveEvent e) {
         Material material = e.getPlayer().getLocation().getBlock().getType();
         if (material == Material.PORTAL || material == Material.ENDER_PORTAL) {
-            final Player p = e.getPlayer();
-            getServer().getScheduler().scheduleSyncDelayedTask(this, new TrapCheck(p), 1L);
+            getServer().getScheduler().scheduleSyncDelayedTask(this, new TrapCheck(e.getPlayer()), 1L);
         }
     }
 
     private class TrapCheck implements Runnable {
 
-        Player p;
+        private final Player p;
 
-        public TrapCheck(final Player p) {
+        public TrapCheck(Player p) {
             this.p = p;
         }
 
@@ -89,7 +87,14 @@ public class AntiPortalTrap extends JavaPlugin implements Listener {
                 midwblock.setX(wblock.getX());
                 topwblock.setX(wblock.getX());
             }
-            if ((!getConfig().getIntegerList("Allowed Blocks.Bottom").contains(nblock.getBlock().getTypeId()) || !getConfig().getIntegerList("Allowed Blocks.Top").contains(midnblock.getBlock().getTypeId())) && (!getConfig().getIntegerList("Allowed Blocks.Bottom").contains(sblock.getBlock().getTypeId()) || !getConfig().getIntegerList("Allowed Blocks.Top").contains(midsblock.getBlock().getTypeId())) && (!getConfig().getIntegerList("Allowed Blocks.Bottom").contains(eblock.getBlock().getTypeId()) || !getConfig().getIntegerList("Allowed Blocks.Top").contains(mideblock.getBlock().getTypeId())) && (!getConfig().getIntegerList("Allowed Blocks.Bottom").contains(wblock.getBlock().getTypeId()) || !getConfig().getIntegerList("Allowed Blocks.Top").contains(midwblock.getBlock().getTypeId())) && (!getConfig().getIntegerList("Allowed Blocks.Bottom").contains(midnblock.getBlock().getTypeId()) || !getConfig().getIntegerList("Allowed Blocks.Top").contains(topnblock.getBlock().getTypeId())) && (!getConfig().getIntegerList("Allowed Blocks.Bottom").contains(midsblock.getBlock().getTypeId()) || !getConfig().getIntegerList("Allowed Blocks.Top").contains(topsblock.getBlock().getTypeId())) && (!getConfig().getIntegerList("Allowed Blocks.Bottom").contains(mideblock.getBlock().getTypeId()) || !getConfig().getIntegerList("Allowed Blocks.Top").contains(topeblock.getBlock().getTypeId())) && (!getConfig().getIntegerList("Allowed Blocks.Bottom").contains(midwblock.getBlock().getTypeId()) || !getConfig().getIntegerList("Allowed Blocks.Top").contains(topwblock.getBlock().getTypeId()))) {
+            if ((!getAllowedBlocks_Bottom().contains(nblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(midnblock.getBlock().getTypeId()))
+                    && (!getAllowedBlocks_Bottom().contains(sblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(midsblock.getBlock().getTypeId()))
+                    && (!getAllowedBlocks_Bottom().contains(eblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(mideblock.getBlock().getTypeId()))
+                    && (!getAllowedBlocks_Bottom().contains(wblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(midwblock.getBlock().getTypeId()))
+                    && (!getAllowedBlocks_Bottom().contains(midnblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topnblock.getBlock().getTypeId()))
+                    && (!getAllowedBlocks_Bottom().contains(midsblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topsblock.getBlock().getTypeId()))
+                    && (!getAllowedBlocks_Bottom().contains(mideblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topeblock.getBlock().getTypeId()))
+                    && (!getAllowedBlocks_Bottom().contains(midwblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topwblock.getBlock().getTypeId()))) {
                 HashMap<String, List<Double>> coordloc = new HashMap<>();
                 List<Double> xloc = new ArrayList<>();
                 List<Double> zloc = new ArrayList<>();
@@ -111,6 +116,14 @@ public class AntiPortalTrap extends JavaPlugin implements Listener {
                 block.setType(Material.AIR);
             }
         }
+    }
+
+    List<Integer> getAllowedBlocks_Bottom() {
+        return getConfig().getIntegerList("Allowed Blocks.Bottom");
+    }
+
+    List<Integer> getAllowedBlocks_Top() {
+        return getConfig().getIntegerList("Allowed Blocks.Top");
     }
 
     @EventHandler
