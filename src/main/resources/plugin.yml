@@ -1,5 +1,5 @@
 name: AntiPortalTrap
-version: 1.2-SamistineV2
+version: ${project.version}-b${BUILD_NUMBER}
 main: me.xCopyright.antiportaltrap.AntiPortalTrap
 author: xCopyright
 authors: [Samistine]
