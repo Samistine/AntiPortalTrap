@@ -1,5 +1,10 @@
 name: AntiPortalTrap
 version: ${project.version}-b${BUILD_NUMBER}
+
+git_repo: https://github.com/Samistine/AntiPortalTrap
+git_hash: ${git_hash}
+jenkins_build: ${BUILD_NUMBER}
+
 main: me.xCopyright.antiportaltrap.AntiPortalTrap
 author: xCopyright
 authors: [Samistine]

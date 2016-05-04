@@ -16,7 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class AntiPortalTrap extends JavaPlugin implements Listener {
+public final class AntiPortalTrap extends JavaPlugin implements Listener {
 
     Map<Player, XZLocation> portalloc = new HashMap<>();
     Map<Player, Location> startloc = new HashMap<>();
