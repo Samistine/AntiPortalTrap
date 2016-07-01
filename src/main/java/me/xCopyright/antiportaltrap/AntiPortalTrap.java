@@ -7,36 +7,41 @@ import org.bukkit.block.Block;
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.Location;
-import java.util.ArrayList;
-import org.bukkit.entity.Player;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.Player;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public final class AntiPortalTrap extends JavaPlugin implements Listener {
 
     Map<Player, XZLocation> portalloc = new HashMap<>();
-    Map<Player, Location> startloc = new HashMap<>();
+
+    HashSet<Integer> allowedBottomBlocks;
+    HashSet<Integer> allowedTopperBlocks;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         getServer().getPluginManager().registerEvents(this, this);
+        this.allowedBottomBlocks = new HashSet<>(getConfig().getIntegerList("Allowed Blocks.Bottom"));
+        this.allowedTopperBlocks = new HashSet<>(getConfig().getIntegerList("Allowed Blocks.Top"));
     }
 
     @EventHandler
-    public void onPortalEvent(PlayerPortalEvent portal) {
-        getServer().getScheduler().scheduleSyncDelayedTask(this, new TrapCheck(portal.getPlayer()), 1L);
+    public void onPortalEvent(PlayerPortalEvent event) {
+        getServer().getScheduler().scheduleSyncDelayedTask(this, new TrapCheck(event.getPlayer()), 1L);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onPlayerMoveEvent(PlayerMoveEvent e) {
-        Material material = e.getPlayer().getLocation().getBlock().getType();
+    public void onPlayerMoveEvent(PlayerMoveEvent event) {
+        Material material = event.getPlayer().getLocation().getBlock().getType();
         if (material == Material.PORTAL || material == Material.ENDER_PORTAL) {
-            getServer().getScheduler().scheduleSyncDelayedTask(this, new TrapCheck(e.getPlayer()), 1L);
+            getServer().getScheduler().scheduleSyncDelayedTask(this, new TrapCheck(event.getPlayer()), 1L);
         }
     }
 
@@ -87,90 +92,89 @@ public final class AntiPortalTrap extends JavaPlugin implements Listener {
                 midwblock.setX(wblock.getX());
                 topwblock.setX(wblock.getX());
             }
-            if ((!getAllowedBlocks_Bottom().contains(nblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(midnblock.getBlock().getTypeId()))
-                    && (!getAllowedBlocks_Bottom().contains(sblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(midsblock.getBlock().getTypeId()))
-                    && (!getAllowedBlocks_Bottom().contains(eblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(mideblock.getBlock().getTypeId()))
-                    && (!getAllowedBlocks_Bottom().contains(wblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(midwblock.getBlock().getTypeId()))
-                    && (!getAllowedBlocks_Bottom().contains(midnblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topnblock.getBlock().getTypeId()))
-                    && (!getAllowedBlocks_Bottom().contains(midsblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topsblock.getBlock().getTypeId()))
-                    && (!getAllowedBlocks_Bottom().contains(mideblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topeblock.getBlock().getTypeId()))
-                    && (!getAllowedBlocks_Bottom().contains(midwblock.getBlock().getTypeId()) || !getAllowedBlocks_Top().contains(topwblock.getBlock().getTypeId()))) {
+            if ((!allowedBottomBlocks.contains(nblock.getBlock().getTypeId()) || !allowedTopperBlocks.contains(midnblock.getBlock().getTypeId()))
+                    && (!allowedBottomBlocks.contains(sblock.getBlock().getTypeId()) || !allowedTopperBlocks.contains(midsblock.getBlock().getTypeId()))
+                    && (!allowedBottomBlocks.contains(eblock.getBlock().getTypeId()) || !allowedTopperBlocks.contains(mideblock.getBlock().getTypeId()))
+                    && (!allowedBottomBlocks.contains(wblock.getBlock().getTypeId()) || !allowedTopperBlocks.contains(midwblock.getBlock().getTypeId()))
+                    && (!allowedBottomBlocks.contains(midnblock.getBlock().getTypeId()) || !allowedTopperBlocks.contains(topnblock.getBlock().getTypeId()))
+                    && (!allowedBottomBlocks.contains(midsblock.getBlock().getTypeId()) || !allowedTopperBlocks.contains(topsblock.getBlock().getTypeId()))
+                    && (!allowedBottomBlocks.contains(mideblock.getBlock().getTypeId()) || !allowedTopperBlocks.contains(topeblock.getBlock().getTypeId()))
+                    && (!allowedBottomBlocks.contains(midwblock.getBlock().getTypeId()) || !allowedTopperBlocks.contains(topwblock.getBlock().getTypeId()))) {
 
-                List<Double> xloc = new ArrayList<>();
-                List<Double> zloc = new ArrayList<>();
+                List<Double> xloc = Arrays.asList(
+                        l.getX() - 2.0,
+                        l.getX() - 1.0,
+                        l.getX(),
+                        l.getX() + 1.0,
+                        l.getX() + 2.0
+                );
 
-                startloc.put(p, l);
-                xloc.add(l.getX() - 2.0);
-                xloc.add(l.getX() - 1.0);
-                xloc.add(l.getX());
-                xloc.add(l.getX() + 1.0);
-                xloc.add(l.getX() + 2.0);
+                List<Double> zloc = Arrays.asList(
+                        l.getZ() - 2.0,
+                        l.getZ() - 1.0,
+                        l.getZ(),
+                        l.getZ() + 1.0,
+                        l.getZ() + 2.0
+                );
 
-                zloc.add(l.getZ() - 2.0);
-                zloc.add(l.getZ() - 1.0);
-                zloc.add(l.getZ());
-                zloc.add(l.getZ() + 1.0);
-                zloc.add(l.getZ() + 2.0);
-
-                portalloc.put(p, new XZLocation(xloc, zloc));
+                portalloc.put(p, new XZLocation(xloc, zloc, l));
                 Block block = p.getLocation().getWorld().getBlockAt(p.getLocation());
                 block.setType(Material.AIR);
             }
         }
     }
 
-    List<Integer> getAllowedBlocks_Bottom() {
-        return getConfig().getIntegerList("Allowed Blocks.Bottom");
-    }
-
-    List<Integer> getAllowedBlocks_Top() {
-        return getConfig().getIntegerList("Allowed Blocks.Top");
-    }
-
     @EventHandler
-    public void onPortalTpLeave(PlayerTeleportEvent portaltpleave) {
-        Player p = portaltpleave.getPlayer();
-        if (!portalloc.containsKey(p)) {
-            return;
-        }
-        XZLocation coordloc = portalloc.get(p);
-        List<Double> xloc = coordloc.x;
-        List<Double> zloc = coordloc.z;
-        if (!xloc.contains(portaltpleave.getTo().getX()) && !zloc.contains(portaltpleave.getTo().getZ())) {
-            Location l = startloc.get(p);
-            Block block = l.getWorld().getBlockAt(l);
-            block.setType(Material.FIRE);
-            portalloc.remove(p);
-            startloc.remove(p);
+    public void onPortalTpLeave(PlayerTeleportEvent event) {
+        Player p = event.getPlayer();
+        if (portalloc.containsKey(p)) {
+            XZLocation coordloc = portalloc.get(p);
+            List<Double> xloc = coordloc.x;
+            List<Double> zloc = coordloc.z;
+            if (!xloc.contains(event.getTo().getX()) && !zloc.contains(event.getTo().getZ())) {
+                coordloc.loc.getBlock().setType(Material.FIRE);
+                portalloc.remove(p);
+            }
         }
     }
 
     @EventHandler
-    public void onPortalLeave(PlayerMoveEvent portalleave) {
-        Player p = portalleave.getPlayer();
-        if (!portalloc.containsKey(p)) {
-            return;
-        }
-        XZLocation coordloc = portalloc.get(p);
-        List<Double> xloc = coordloc.x;
-        List<Double> zloc = coordloc.z;
-        if (xloc.get(0) > portalleave.getTo().getX() || xloc.get(4) < portalleave.getTo().getX() || zloc.get(0) > portalleave.getTo().getZ() || zloc.get(4) < portalleave.getTo().getZ()) {
-            Location l = startloc.get(p);
-            Block block = l.getWorld().getBlockAt(l);
-            block.setType(Material.FIRE);
-            portalloc.remove(p);
-            startloc.remove(p);
+    public void onPortalLeave(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (portalloc.containsKey(player)) {
+            XZLocation coordloc = portalloc.get(player);
+            if (coordloc.lowestX > event.getTo().getX() || coordloc.highestX < event.getTo().getX() || coordloc.lowestZ > event.getTo().getZ() || coordloc.highestZ < event.getTo().getZ()) {
+                coordloc.loc.getBlock().setType(Material.FIRE);
+                portalloc.remove(player);
+            }
         }
     }
 
     static class XZLocation {
 
-        List<Double> x;
-        List<Double> z;
+        final List<Double> x;
+        final List<Double> z;
 
-        public XZLocation(List<Double> x, List<Double> z) {
+        final double lowestX;
+        final double highestX;
+
+        final double lowestZ;
+        final double highestZ;
+
+        final Location loc;
+
+        public XZLocation(List<Double> x, List<Double> z, Location loc) {
             this.x = x;
             this.z = z;
+
+            this.loc = loc;
+
+            this.lowestX = x.get(0);
+            this.highestX = x.get(4);
+
+            this.lowestZ = z.get(0);
+            this.highestZ = z.get(4);
         }
+
     }
 }
